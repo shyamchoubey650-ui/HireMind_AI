@@ -323,7 +323,7 @@
 
 
 
-const API_BASE = "https://hiremind-ai-xzup.onrender.com/api";
+export const API_BASE = "https://hiremind-ai-xzup.onrender.com/api";
 
 export function getToken() {
   return localStorage.getItem("hiremind_token");
