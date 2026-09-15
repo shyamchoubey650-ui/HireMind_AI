@@ -1,0 +1,541 @@
+/* ═══════════════════════════════════════════════════════════
+   1. FORM INPUT & ICON TRAIL POSITIONING
+   ═══════════════════════════════════════════════════════════ */
+
+/* Ensure parent cards/grids allow dropdowns to overflow without clipping */
+.card,
+.postjob-card,
+.grid-2 {
+  overflow: visible !important;
+}
+
+/* Base input wrapper context */
+.input-icon-trail,
+.textarea-icon-wrap {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+/* Text inputs */
+.input-icon-trail input {
+  width: 100% !important;
+  padding-right: 38px !important;
+  cursor: pointer !important;
+}
+
+/* Two-icons variant (Location input with Chevron + Pin) */
+.input-icon-trail.two-icons input {
+  padding-right: 64px !important;
+}
+
+.input-icon-trail.two-icons .pj-loc-chevron {
+  position: absolute !important;
+  right: 36px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: wheat !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition: color 0.15s ease, transform 0.15s ease;
+  z-index: 2;
+}
+
+.input-icon-trail.two-icons .pj-loc-chevron:hover {
+  color: #c084fc !important;
+}
+
+.input-icon-trail.two-icons .pj-loc-pin {
+  position: absolute !important;
+  right: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: wheat !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition: color 0.15s ease, transform 0.15s ease;
+  z-index: 2;
+}
+
+.input-icon-trail.two-icons .pj-loc-pin:hover {
+  color: #c084fc !important;
+  transform: translateY(-50%) scale(1.1) !important;
+}
+
+/* Single static trailing icon (Job Title) */
+.input-icon-trail > svg:not(.pj-exp-clock-btn):not(.pj-loc-chevron):not(.pj-loc-pin),
+.input-icon-trail > .icon:not(.pj-exp-clock-btn):not(.pj-loc-chevron):not(.pj-loc-pin),
+.input-icon-trail > span:not(.pj-loc-dropdown) {
+  position: absolute !important;
+  right: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: #64748b !important;
+  pointer-events: none !important;
+}
+
+/* Interactive Clock Button (Experience Input) */
+.pj-exp-clock-btn {
+  position: absolute !important;
+  right: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: wheat !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  transition: color 0.15s ease, transform 0.15s ease;
+  z-index: 2;
+}
+
+.pj-exp-clock-btn:hover {
+  color: #c084fc !important;
+  transform: translateY(-50%) scale(1.15) !important;
+}
+
+/* Textarea trailing icon */
+.textarea-icon-wrap textarea {
+  width: 100% !important;
+  padding-right: 36px !important;
+}
+
+.textarea-icon-wrap > svg,
+.textarea-icon-wrap > .icon {
+  position: absolute !important;
+  right: 14px !important;
+  top: 14px !important;
+  color: #64748b !important;
+  pointer-events: none !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   2. DROPDOWN PANEL (Location & Experience)
+   ═══════════════════════════════════════════════════════════ */
+
+.pj-loc-dropdown,
+.pj-exp-dropdown {
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  max-height: 280px !important;
+  overflow-y: auto !important;
+  background: #090e1a !important;
+  border: 1px solid rgba(114, 121, 154, 0.85); 
+  border-radius: 7px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9) !important;
+  padding: 8px 8px 14px 8px !important;
+  z-index: 9999 !important;
+}
+
+/* Scrollbars */
+.pj-loc-dropdown::-webkit-scrollbar,
+.pj-exp-dropdown::-webkit-scrollbar {
+  width: 5px;
+}
+.pj-loc-dropdown::-webkit-scrollbar-track,
+.pj-exp-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+.pj-loc-dropdown::-webkit-scrollbar-thumb,
+.pj-exp-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+}
+.pj-loc-dropdown::-webkit-scrollbar-thumb:hover,
+.pj-exp-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.4);
+}
+
+/* Groups */
+.pj-loc-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+}
+
+.pj-loc-group + .pj-loc-group {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.pj-loc-group-label {
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #64748b;
+  padding: 4px 8px 3px;
+  display: block;
+  text-align: left;
+}
+
+/* Row Items */
+.pj-loc-item {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 40px !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  border-radius: 8px !important;
+  padding: 6px 8px !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease;
+  box-shadow: none !important;
+}
+
+.pj-loc-item:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.pj-loc-item.selected {
+  background: rgba(49, 46, 129, 0.28) !important;
+  border: none !important;
+}
+
+/* Left block content */
+.pj-loc-item-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  text-align: left !important;
+}
+
+.pj-loc-item-left > div {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  text-align: left !important;
+}
+
+.pj-loc-text {
+  color: #ffffff !important;
+  font-size: 13.5px !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em !important;
+  line-height: 1.25 !important;
+  text-align: left !important;
+  display: block !important;
+}
+
+.pj-exp-subtext {
+  display: block !important;
+  font-size: 11px !important;
+  color: #64748b !important;
+  margin-top: 1px !important;
+  text-align: left !important;
+  line-height: 1.2 !important;
+}
+
+/* Compact Badges */
+.pj-loc-icon {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 7px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  border: none !important;
+}
+
+.pj-loc-icon svg {
+  width: 15px !important;
+  height: 15px !important;
+}
+
+/* Badge Color Themes */
+.icon-remote {
+  background: rgba(217, 70, 239, 0.15) !important;
+  color: #e879f9 !important;
+}
+.icon-hybrid {
+  background: rgba(59, 130, 246, 0.15) !important;
+  color: #60a5fa !important;
+}
+.icon-onsite {
+  background: rgba(20, 184, 166, 0.15) !important;
+  color: #2dd4bf !important;
+}
+.icon-city-purple, .icon-purple {
+  background: rgba(168, 85, 247, 0.15) !important;
+  color: #c084fc !important;
+}
+.icon-city-blue, .icon-blue {
+  background: rgba(56, 189, 248, 0.15) !important;
+  color: #38bdf8 !important;
+}
+.icon-city-cyan {
+  background: rgba(45, 212, 191, 0.15) !important;
+  color: #2dd4bf !important;
+}
+.icon-city-pink, .icon-pink {
+  background: rgba(244, 63, 94, 0.15) !important;
+  color: #fb7185 !important;
+}
+.icon-green {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+}
+.icon-orange {
+  background: rgba(249, 115, 22, 0.15) !important;
+  color: #fb923c !important;
+}
+
+/* Right-side Checkmark */
+.pj-loc-check {
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  background: #6366f1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.6) !important;
+  flex-shrink: 0 !important;
+  border: none !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   3. LOCATION MAP MODAL OVERLAY & ACTIONS
+   ═══════════════════════════════════════════════════════════ */
+
+.pj-map-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 7, 18, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: clamp(16px, 4vh, 32px) 16px;
+}
+
+.pj-map-modal {
+  width: 100%;
+  max-width: 660px;
+  max-height: min(88vh, 720px);
+  background: #090e1a;
+  border-radius: 20px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.95);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin: auto;
+}
+
+.pj-map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pj-map-header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.pj-map-close {
+  background: rgba(255, 255, 255, 0.04);
+  border: none;
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pj-map-close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.pj-map-search {
+  display: flex;
+  gap: 8px;
+  padding: 14px 20px;
+  position: relative;
+}
+
+.pj-map-search input {
+  flex: 1;
+  background: #111827;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 12px;
+  color: #fff;
+  font-size: 13px;
+  transition: all 0.15s ease;
+}
+
+.pj-map-search input:focus {
+  outline: none;
+  background: #141f36;
+}
+
+.pj-map-search button {
+  background: linear-gradient(135deg, #8b5cf6, #d946ef);
+  border: none;
+  border-radius: 10px;
+  padding: 0 16px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.pj-map-search button:hover {
+  opacity: 0.92;
+}
+
+.pj-map-results {
+  position: absolute;
+  top: calc(100% - 6px);
+  left: 20px;
+  right: 20px;
+  background: #111827;
+  border-radius: 10px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.9);
+  max-height: 180px;
+  overflow-y: auto;
+  z-index: 2000;
+  padding: 4px;
+}
+
+.pj-map-result-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 12.5px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.pj-map-result-item:hover {
+  background: rgba(139, 92, 246, 0.2);
+  color: #fff;
+}
+
+.pj-map-container {
+  width: 100%;
+  height: 290px;
+  background: #e5e7eb;
+}
+
+.pj-map-footer {
+  padding: 14px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pj-map-selected {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.85);
+  min-height: 18px;
+}
+
+.pj-map-selected .muted {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.pj-map-footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.pj-map-btn-cancel {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pj-map-btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.pj-map-btn-use {
+  background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+  border: none;
+  color: #ffffff;
+  border-radius: 10px;
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.35);
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+
+.pj-map-btn-use:hover:not(:disabled) {
+  opacity: 0.94;
+  transform: translateY(-1px);
+}
+
+.pj-map-btn-use:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Tablet & Mobile Responsive */
+@media (max-width: 860px) {
+  .pj-map-overlay {
+    padding-top: 72px;
+    padding-bottom: 20px;
+    align-items: flex-start;
+  }
+  .pj-map-modal {
+    max-height: calc(100vh - 96px);
+  }
+}
+
+@media (max-width: 580px) {
+  .pj-map-overlay {
+    padding: 64px 10px 16px 10px;
+  }
+  .pj-map-modal {
+    max-height: calc(100vh - 80px);
+  }
+  .pj-map-container {
+    height: 210px;
+  }
+}

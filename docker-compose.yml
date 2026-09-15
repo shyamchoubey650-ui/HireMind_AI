@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: hiremind
+      POSTGRES_PASSWORD: hiremind
+      POSTGRES_DB: hiremind
+    ports:
+      - "5432:5432"
+    volumes:
+      - hiremind_pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg2://hiremind:hiremind@db:5432/hiremind
+      JWT_SECRET: change-me-in-production
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  frontend:
+    image: python:3.11-slim
+    working_dir: /site
+    volumes:
+      - ./frontend:/site
+    command: python -m http.server 5500
+    ports:
+      - "5500:5500"
+    depends_on:
+      - backend
+
+volumes:
+  hiremind_pgdata:

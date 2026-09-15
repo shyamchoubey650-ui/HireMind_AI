@@ -1,0 +1,38 @@
+# ============================================================
+# ADD THESE TO models.py
+# ============================================================
+
+# 1) Add these 4 columns to your EXISTING SecurityEvent class definition
+#    (alongside id, submission_id, candidate_id, event_type, question_id,
+#    metadata_json, created_at -- do not duplicate the class, just add
+#    these Column() lines inside it):
+#
+#     severity = Column(String, default="low")           # low | medium | high
+#     risk_points = Column(Integer, default=0)
+#     review_status = Column(String, default="unreviewed")  # unreviewed | reviewed | flagged
+#     recruiter_notes = Column(String, default="")
+#
+#    NOTE: severity/risk_points are computed live by risk_engine.py in
+#    monitor_router.py's list endpoint rather than read from these
+#    columns -- they're included here mainly so review_status/
+#    recruiter_notes (which ARE read/written) sit on a fully-migrated
+#    row shape. Safe to leave severity/risk_points unused for now.
+
+
+# 2) Add this as a NEW top-level class (new table, matches
+#    migrate_proctoring.py's CREATE TABLE):
+
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from datetime import datetime
+from .database import Base  # adjust import if your Base lives elsewhere
+
+
+class ProctorSnapshot(Base):
+    __tablename__ = "proctor_snapshots"
+
+    id = Column(Integer, primary_key=True, index=True)
+    submission_id = Column(Integer, ForeignKey("assessment_submissions.id"))
+    candidate_id = Column(Integer, ForeignKey("users.id"))
+    question_id = Column(String, default="")
+    file_path = Column(String, nullable=False)
+    captured_at = Column(DateTime, default=datetime.utcnow)

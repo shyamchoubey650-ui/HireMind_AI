@@ -1,0 +1,22 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+sqlalchemy>=2.0.35
+pydantic>=2.9.0
+python-jose[cryptography]>=3.3.0
+python-multipart>=0.0.12
+scikit-learn>=1.5.2
+numpy>=2.1.0
+PyPDF2>=3.0.1
+python-docx>=1.1.2
+email-validator>=2.2.0
+psycopg2-binary>=2.9.9
+
+
+# Proctoring / computer vision
+opencv-python>=4.10.0
+mediapipe>=0.10.14
+ultralytics>=8.3.0
+Pillow>=10.0.0
+
+# AI question generation (set_generator.py's LLM tier)
+openai>=1.30.0
