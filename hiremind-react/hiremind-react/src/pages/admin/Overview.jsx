@@ -310,7 +310,7 @@ export default function Overview() {
     });
   }, [applicantsList, pipelineSearch]);
 
-const stageChartConfig = useMemo(() => {
+  const stageChartConfig = useMemo(() => {
     if (!data) return null;
 
     const values = STAGE_OPTIONS.map(
@@ -1834,28 +1834,29 @@ const stageChartConfig = useMemo(() => {
                   }}
                 >
                   <div
+
                     style={{
-                      width: 'min(100%, 360px)',
+                      width: '100%',
+                      maxWidth: '360px',
                       height: '160px',
-                      display: 'grid',
-                      gridTemplateColumns:
-                        '160px minmax(120px, 160px)',
+                      display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      columnGap: '70px',
-                      flexShrink: 1,
+                      gap: 'clamp(45px, 6vw, 70px)',
                       minWidth: 0,
                       boxSizing: 'border-box',
                     }}
                   >
                     {/* DOUGHNUT */}
+                    {/* DOUGHNUT */}
                     <div
                       style={{
                         position: 'relative',
-                        width: '160px',
-                        height: '160px',
+                        width: 'clamp(165px, 34vw, 160px)',
+                        height: 'clamp(100px, 34vw, 160px)',
                         minWidth: 0,
                         minHeight: 0,
+                        flexShrink: 0,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
