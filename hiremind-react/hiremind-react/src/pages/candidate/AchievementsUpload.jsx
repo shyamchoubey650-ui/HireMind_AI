@@ -152,6 +152,7 @@ const STYLES = `
   box-sizing: border-box;
 }
 
+
 .achv-page {
   --bg: #070913;
   --panel: rgba(13, 17, 30, 0.82);
@@ -1421,7 +1422,7 @@ const STYLES = `
 }
 
 @media (max-width: 520px) {
-  .achv-page { padding: 16px 12px 24px; }
+  .achv-page { padding: 16px 1px 24px; }
   .achv-header { flex-direction: column; align-items: stretch; }
   .achv-title-wrap { align-items: flex-start; }
   .achv-count-badge { width: 100%; justify-content: center; }
@@ -1457,9 +1458,25 @@ const STYLES = `
     flex: 1;
     height: 38px;
   }
-  .achv-modal-card { padding: 18px; }
-  .achv-preview-card { width: 96vw; height: 80vh; padding: 14px; }
+  .achv-modal-card { padding: 20px;}
+  .achv-preview-card { width: 93.5vw; height: 80vh; padding: 14px; }
   .achv-toast-stack { left: 12px; right: 12px; top: 12px; max-width: none; }
+
+
+    .achv-modal-card {
+    padding: 20px;
+    width: min(94vw, 460px) !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+
+  .achv-modal-actions {
+    flex-wrap: wrap !important;
+  }
+
+  .achv-modal-actions button {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
 }
 
 @media (max-width: 380px) {
@@ -2585,7 +2602,7 @@ export default function AchievementsUpload() {
       {/* MODAL 1 - ADD ACADEMIC ACHIEVEMENT */}
       {showAddAchievementModal && (
         <div className="achv-modal-overlay" onClick={() => setShowAddAchievementModal(false)}>
-          <div className="achv-modal-card" onClick={(e) => e.stopPropagation()}>
+          <div className="achv-modal-card" style={{ width: '380px' }} onClick={(e) => e.stopPropagation()}>
             <div className="achv-modal-head">
               <h3 className="achv-modal-title">Add Academic Achievement</h3>
               <button

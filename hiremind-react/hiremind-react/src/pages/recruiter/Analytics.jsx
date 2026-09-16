@@ -1140,6 +1140,29 @@ function timeAgo(value) {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
+
+// function parseServerDate(value) {
+//   if (!value) return null;
+//   let dateString = String(value).trim();
+//   if (!/[zZ]$/.test(dateString) && !/[+-]\d{2}:\d{2}$/.test(dateString)) {
+//     dateString = dateString.replace(' ', 'T') + 'Z';
+//   }
+//   const d = new Date(dateString);
+//   return Number.isNaN(d.getTime()) ? null : d;
+// }
+
+// function timeAgo(value) {
+//   const created = parseServerDate(value);
+//   if (!created) return '';
+//   const diffMs = Math.max(0, Date.now() - created.getTime());
+//   const mins = Math.floor(diffMs / 60000);
+//   if (mins < 1) return 'just now';
+//   if (mins < 60) return `${mins}m ago`;
+//   const hrs = Math.floor(mins / 60);
+//   if (hrs < 24) return `${hrs}h ago`;
+//   return `${Math.floor(hrs / 24)}d ago`;
+// }
+
 function getInitials(name) {
   if (!name) return 'CN';
   const parts = name.trim().split(' ');
@@ -2718,6 +2741,7 @@ export default function Analytics() {
       <Modal open={selectedInterview !== null} onClose={() => setSelectedInterview(null)} maxWidth={520}>
         {selectedInterview && (() => {
           const dt = new Date(selectedInterview.scheduled_at);
+          // const dt = parseServerDate(selectedActivity.created_at) || new Date();
           const jobTitle = resolveJobTitle(selectedInterview.job_id);
           const candidateName = selectedInterview.candidate_name || candidateMap[selectedInterview.candidate_id]?.name || `Candidate #${selectedInterview.candidate_id}`;
           const candidateEmail = getInterviewCandidateEmail(selectedInterview);
@@ -3092,17 +3116,17 @@ export default function Analytics() {
                 {/* Event Category */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0%, rgba(168, 85, 247, 0.06) 100%)', border: '1px solid rgba(168, 85, 247, 0.3)', borderRadius: '14px', padding: '12px 16px', boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(168, 85, 247, 0.2)', border: '1px solid rgba(168, 85, 247, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c084fc', flexShrink: 0 }}>
+                    <div style={{ width: 30, height: 30, borderRadius: '10px', background: 'rgba(168, 85, 247, 0.2)', border: '1px solid rgba(168, 85, 247, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c084fc', flexShrink: 0 }}>
                       ⚡
                     </div>
                     <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' }}>Event Type</div>
-                      <div style={{ fontSize: 14, color: '#fff', fontWeight: 700, marginTop: 1, textTransform: 'uppercase' }}>
+                      <div style={{ fontSize: 8, color: '#94a3b8', fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' }}>Event Type</div>
+                      <div style={{ fontSize: 12, color: '#fff', fontWeight: 700, marginTop: 1, textTransform: 'uppercase' }}>
                         {selectedActivity.type ? selectedActivity.type.replace('_', ' ') : 'NOTIFICATION'}
                       </div>
                     </div>
                   </div>
-                  <div style={{ background: 'rgba(168, 85, 247, 0.18)', border: '1px solid rgba(168, 85, 247, 0.5)', borderRadius: '20px', padding: '5px 12px', fontSize: '11.5px', color: '#d8b4fe', fontWeight: 600, flexShrink: 0 }}>
+                  <div style={{ background: 'rgba(168, 85, 247, 0.18)', border: '1px solid rgba(168, 85, 247, 0.5)', borderRadius: '20px', padding: '5px 12px', fontSize: '8.5px', color: '#d8b4fe', fontWeight: 600, flexShrink: 0 }}>
                     Automated Log
                   </div>
                 </div>
@@ -3118,7 +3142,7 @@ export default function Analytics() {
                 {/* Date & Time Log (12-hour format with AM/PM) */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0%, rgba(20, 184, 166, 0.06) 100%)', border: '1px solid rgba(20, 184, 166, 0.3)', borderRadius: '14px', padding: '12px 16px', boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'rgba(20, 184, 166, 0.2)', border: '1px solid rgba(20, 184, 166, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2dd4bf', flexShrink: 0 }}>
+                    <div style={{ width: 30, height: 30, borderRadius: '10px', background: 'rgba(20, 184, 166, 0.2)', border: '1px solid rgba(20, 184, 166, 0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2dd4bf', flexShrink: 0 }}>
                       🕒
                     </div>
                     <div style={{ minWidth: 0 }}>
