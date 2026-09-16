@@ -1463,7 +1463,8 @@ const STYLES = `
   .achv-toast-stack { left: 12px; right: 12px; top: 12px; max-width: none; }
 
 
-    .achv-modal-card {
+  .achv-modal-card {
+  
     padding: 20px;
     width: min(94vw, 460px) !important;
     max-width: calc(100vw - 32px) !important;
