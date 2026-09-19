@@ -929,7 +929,7 @@ export default function Users() {
           background: rgba(16, 185, 129, 0.12);
           border: 1px solid rgba(16, 185, 129, 0.3);
           color: #34d399;
-          font-size: 9.5px;
+          font-size: 8.5px;
           font-weight: 800;
           letter-spacing: 0.04em;
           width: fit-content;
@@ -945,7 +945,7 @@ export default function Users() {
 
         .pmodal-chevron {
           color: #64748b;
-          font-size: 14px;
+          font-size: 12px;
           font-weight: 700;
           margin-left: auto;
         }
