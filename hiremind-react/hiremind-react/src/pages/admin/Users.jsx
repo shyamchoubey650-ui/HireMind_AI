@@ -3,6 +3,45 @@ import { apiRequest } from '../../api';
 import { useToast } from '../../context/ToastContext';
 import Modal from '../../components/Modal';
 
+
+function formatJoinedDateTime(timestamp) {
+  if (!timestamp) return '—';
+
+  const raw = String(timestamp).trim();
+
+  // Backend timestamps are UTC but may not contain the "Z".
+  // Add Z so JavaScript correctly converts UTC → user's local time.
+  const utcTimestamp =
+    /(?:Z|[+-]\d{2}:?\d{2})$/i.test(raw) ? raw : `${raw}Z`;
+
+  const date = new Date(utcTimestamp);
+
+  if (Number.isNaN(date.getTime())) return '—';
+
+  return date.toLocaleString([], {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+  });
+}
+
+// Shared helper: safely parse a backend timestamp as UTC.
+// Backend timestamps are UTC but may arrive without a "Z" or offset suffix
+// (e.g. "2026-09-19T10:30:00"). Without normalizing, `new Date(...)` treats
+// that string as LOCAL time instead of UTC, which silently shifts every
+// displayed time by your UTC offset. This fixes that for every formatter
+// below that touches created_at / joined dates.
+function toUtcSafeDate(dateString) {
+  const raw = String(dateString).trim();
+  const utcTimestamp =
+    /(?:Z|[+-]\d{2}:?\d{2})$/i.test(raw) ? raw : `${raw}Z`;
+  return new Date(utcTimestamp);
+}
+
 const AVATAR_GRADIENTS = [
   'linear-gradient(135deg, #ec4899 0%, #f43f5e 100%)',
   'linear-gradient(135deg, #f97316 0%, #ef4444 100%)',
@@ -32,7 +71,7 @@ function getInitials(name) {
 function formatDate(dateString) {
   if (!dateString) return '30/08/2026';
   try {
-    const d = new Date(dateString);
+    const d = toUtcSafeDate(dateString);
     if (isNaN(d.getTime())) return '30/08/2026';
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -46,7 +85,7 @@ function formatDate(dateString) {
 function formatDateTimeWithAmPm(dateString) {
   if (!dateString) return '30/08/2026, 04:39:35 AM';
   try {
-    const d = new Date(dateString);
+    const d = toUtcSafeDate(dateString);
     if (isNaN(d.getTime())) return '30/08/2026, 04:39:35 AM';
 
     const day = String(d.getDate()).padStart(2, '0');
