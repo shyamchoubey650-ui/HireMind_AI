@@ -867,12 +867,12 @@ export default function Users() {
           align-items: flex-start;
           justify-content: space-between;
           margin-bottom: 8px;
-          gap: 8px;
+          gap: 5px;
         }
 
         .pmodal-icon-badge {
-          width: 34px;
-          height: 34px;
+          width: 30px;
+          height: 30px;
           border-radius: 8px;
           display: flex;
           align-items: center;
@@ -907,14 +907,14 @@ export default function Users() {
 
         .pmodal-tiny-eyebrow {
           font-family: var(--font-mono, monospace);
-          font-size: 9px;
+          font-size: 8px;
           font-weight: 700;
           color: #94a3b8;
           letter-spacing: 0.08em;
         }
 
         .pmodal-stat-title {
-          font-size: 15px;
+          font-size: 13px;
           font-weight: 800;
           color: #ffffff;
           margin-top: 1px;
@@ -929,7 +929,7 @@ export default function Users() {
           background: rgba(16, 185, 129, 0.12);
           border: 1px solid rgba(16, 185, 129, 0.3);
           color: #34d399;
-          font-size: 10.5px;
+          font-size: 9.5px;
           font-weight: 800;
           letter-spacing: 0.04em;
           width: fit-content;
