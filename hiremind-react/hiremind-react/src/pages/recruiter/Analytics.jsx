@@ -1,6 +1,4 @@
 
-
-
 // import { useState, useEffect, useMemo } from 'react';
 // import { apiRequest } from '../../api';
 // import ChartCanvas from '../../components/ChartCanvas';
@@ -32,23 +30,30 @@
 //   return 'tier-low';
 // }
 
-// function timeAgo(value) {
-//   if (!value) return '';
-
+// // Single source of truth for parsing backend timestamps.
+// // Backend timestamps are UTC but may arrive without a "Z" or offset suffix
+// // (e.g. "2026-09-19T10:30:00" or "2026-09-19 10:30:00"). Without this
+// // normalization, `new Date(...)` treats the string as LOCAL time instead
+// // of UTC, which silently shifts every displayed time by your UTC offset.
+// // Every place in this file that turns a created_at/scheduled_at string
+// // into a Date should go through this function so all displayed times
+// // (the "Timestamp" text, the "time ago" badge, interview date/time, etc.)
+// // stay consistent with each other.
+// function parseServerDate(value) {
+//   if (!value) return null;
 //   let dateString = String(value).trim();
-
-//   if (
-//     !/[zZ]$/.test(dateString) &&
-//     !/[+-]\d{2}:\d{2}$/.test(dateString)
-//   ) {
+//   if (!/[zZ]$/.test(dateString) && !/[+-]\d{2}:\d{2}$/.test(dateString)) {
 //     dateString = dateString.replace(' ', 'T') + 'Z';
 //   }
+//   const d = new Date(dateString);
+//   return Number.isNaN(d.getTime()) ? null : d;
+// }
 
-//   const createdTime = new Date(dateString).getTime();
+// function timeAgo(value) {
+//   const created = parseServerDate(value);
+//   if (!created) return '';
 
-//   if (Number.isNaN(createdTime)) return '';
-
-//   const diffMs = Math.max(0, Date.now() - createdTime);
+//   const diffMs = Math.max(0, Date.now() - created.getTime());
 //   const mins = Math.floor(diffMs / 60000);
 
 //   if (mins < 1) return 'just now';
@@ -59,29 +64,6 @@
 
 //   return `${Math.floor(hrs / 24)}d ago`;
 // }
-
-
-// // function parseServerDate(value) {
-// //   if (!value) return null;
-// //   let dateString = String(value).trim();
-// //   if (!/[zZ]$/.test(dateString) && !/[+-]\d{2}:\d{2}$/.test(dateString)) {
-// //     dateString = dateString.replace(' ', 'T') + 'Z';
-// //   }
-// //   const d = new Date(dateString);
-// //   return Number.isNaN(d.getTime()) ? null : d;
-// // }
-
-// // function timeAgo(value) {
-// //   const created = parseServerDate(value);
-// //   if (!created) return '';
-// //   const diffMs = Math.max(0, Date.now() - created.getTime());
-// //   const mins = Math.floor(diffMs / 60000);
-// //   if (mins < 1) return 'just now';
-// //   if (mins < 60) return `${mins}m ago`;
-// //   const hrs = Math.floor(mins / 60);
-// //   if (hrs < 24) return `${hrs}h ago`;
-// //   return `${Math.floor(hrs / 24)}d ago`;
-// // }
 
 // function getInitials(name) {
 //   if (!name) return 'CN';
@@ -1381,7 +1363,7 @@
 //                 {upcomingInterviews && upcomingInterviews.length > 0 && (
 //                   <div className="scroll-panel-tight" style={{ display: 'flex', flexDirection: 'column', gap: 7, maxHeight: '215px', overflowY: 'auto', paddingRight: 2 }}>
 //                     {upcomingInterviews.map((iv, index) => {
-//                       const d = new Date(iv.scheduled_at);
+//                       const d = parseServerDate(iv.scheduled_at) || new Date(iv.scheduled_at);
 //                       const jobTitle = resolveJobTitle(iv.job_id);
 //                       const candidateName = iv.candidate_name || candidateMap[iv.candidate_id]?.name || `Candidate #${iv.candidate_id}`;
 //                       const isTealAccent = index % 2 === 1;
@@ -1660,8 +1642,7 @@
 //       {/* Premium Interview Details Modal with Email ID */}
 //       <Modal open={selectedInterview !== null} onClose={() => setSelectedInterview(null)} maxWidth={520}>
 //         {selectedInterview && (() => {
-//           const dt = new Date(selectedInterview.scheduled_at);
-//           // const dt = parseServerDate(selectedActivity.created_at) || new Date();
+//           const dt = parseServerDate(selectedInterview.scheduled_at) || new Date();
 //           const jobTitle = resolveJobTitle(selectedInterview.job_id);
 //           const candidateName = selectedInterview.candidate_name || candidateMap[selectedInterview.candidate_id]?.name || `Candidate #${selectedInterview.candidate_id}`;
 //           const candidateEmail = getInterviewCandidateEmail(selectedInterview);
@@ -1990,7 +1971,7 @@
 //       {/* Premium Activity Details Modal with 12-Hour AM/PM Formatted Timestamp */}
 //       <Modal open={selectedActivity !== null} onClose={() => setSelectedActivity(null)} maxWidth={520}>
 //         {selectedActivity && (() => {
-//           const dt = new Date(selectedActivity.created_at);
+//           const dt = parseServerDate(selectedActivity.created_at) || new Date();
 //           const datePart = dt.toLocaleDateString('default', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 //           const timePart = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
 //           const formattedTimestamp = `${datePart}, ${timePart}`;
@@ -2109,18 +2090,6 @@
 //     </div>
 //   );
 // }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -3689,12 +3658,26 @@ export default function Analytics() {
                 <div className="scroll-panel-tight" style={{ display: 'flex', flexDirection: 'column', gap: 7, maxHeight: '235px', overflowY: 'auto', paddingRight: 3 }}>
                   {filteredNotifications.map((n, idx) => {
                     const gradient = TIMELINE_GRADIENTS[idx % TIMELINE_GRADIENTS.length];
+                    const isFirst = idx === 0;
                     const isLast = idx === filteredNotifications.length - 1;
+                    const hasLine = filteredNotifications.length > 1;
 
                     return (
                       <div key={n.id} className="activity-timeline-row" style={{ display: 'flex', alignItems: 'center', gap: 9, position: 'relative' }}>
-                        {/* Compact Timeline Node Icon & Connector Line */}
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', alignSelf: 'stretch', justifyContent: 'center' }}>
+                        {/* Timeline node + connector line */}
+                        <div style={{ width: 28, minWidth: 28, display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative', alignSelf: 'stretch' }}>
+                          {hasLine && (
+                            <div style={{
+                              position: 'absolute',
+                              left: '50%',
+                              transform: 'translateX(-50%)',
+                              top: isFirst ? '50%' : '-7px',
+                              bottom: isLast ? '50%' : '-7px',
+                              width: '1.5px',
+                              background: 'linear-gradient(180deg, rgba(168, 85, 247, 0.45) 0%, rgba(59, 130, 246, 0.2) 100%)',
+                              zIndex: 1
+                            }} />
+                          )}
                           <div style={{
                             width: 28,
                             height: 28,
@@ -3709,39 +3692,31 @@ export default function Analytics() {
                             color: '#fff',
                             flexShrink: 0,
                             boxShadow: '0 0 8px rgba(168, 85, 247, 0.3)',
+                            position: 'relative',
                             zIndex: 2
                           }}>
                             <Icon name={n.type === 'interview' ? 'interviews' : n.type === 'assessment' ? 'assessments' : 'applications'} size={12} />
                           </div>
-
-                          {!isLast && (
-                            <div style={{
-                              position: 'absolute',
-                              top: '28px',
-                              bottom: '-7px',
-                              width: '1.5px',
-                              background: 'linear-gradient(180deg, rgba(168, 85, 247, 0.45) 0%, rgba(59, 130, 246, 0.2) 100%)',
-                              zIndex: 1
-                            }} />
-                          )}
                         </div>
 
-                        {/* Activity Row Content Card (Clickable to open detailed modal) */}
-                        <div 
-                          className="activity-item-card"
-                          onClick={() => setSelectedActivity(n)}
-                        >
-                          <div style={{ flex: 1, minWidth: 0, paddingRight: 4 }}>
-                            <div style={{ fontSize: 11.5, color: '#f8fafc', fontWeight: 500, lineHeight: 1.3, wordBreak: 'break-word' }}>
+                        {/* Activity card (click to open the details modal) */}
+                        <div className="activity-item-card" onClick={() => setSelectedActivity(n)}>
+                          <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                            <div style={{ fontSize: 11.5, color: '#f8fafc', fontWeight: 500, lineHeight: 1.35, wordBreak: 'break-word' }}>
                               {n.message}
                             </div>
-                            <div style={{ marginTop: 2 }}>
+
+                            {/* Badge + time on the same row */}
+                            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '4px 8px', marginTop: 5 }}>
                               <span style={{
+                                display: 'inline-block',
+                                whiteSpace: 'nowrap',
                                 background: 'rgba(147, 51, 234, 0.18)',
                                 border: '1px solid rgba(147, 51, 234, 0.4)',
                                 borderRadius: '8px',
-                                padding: '1px 5px',
+                                padding: '1px 6px',
                                 fontSize: '8.5px',
+                                lineHeight: 1.5,
                                 color: '#d8b4fe',
                                 fontWeight: 700,
                                 textTransform: 'uppercase',
@@ -3749,17 +3724,15 @@ export default function Analytics() {
                               }}>
                                 {n.type ? n.type.replace('_', ' ') : 'ASSESSMENT'}
                               </span>
+                              <span style={{ fontSize: 10, color: '#94a3b8', display: 'inline-flex', alignItems: 'center', gap: 3, whiteSpace: 'nowrap' }}>
+                                ⏰ {timeAgo(n.created_at)}
+                              </span>
                             </div>
                           </div>
 
-                          {/* Time Ago & Interactive Chevron */}
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
-                            <span style={{ fontSize: 10, color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 2.5 }}>
-                              ⏰ {timeAgo(n.created_at)}
-                            </span>
-                            <div className="chevron-action-btn" title="View activity details">
-                              &gt;
-                            </div>
+                          {/* Chevron, vertically centered */}
+                          <div className="chevron-action-btn" title="View activity details" style={{ flexShrink: 0 }}>
+                            &gt;
                           </div>
                         </div>
                       </div>
@@ -3855,11 +3828,11 @@ export default function Analytics() {
                       <Icon name="applications" size={16} />
                     </div>
                     <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: 10, color: '#94a3b8', fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' }}>Candidate</div>
+                      <div style={{ fontSize: 9, color: '#94a3b8', fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' }}>Candidate</div>
                       <div style={{ fontSize: 14, color: '#fff', fontWeight: 700, marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{candidateName}</div>
                     </div>
                   </div>
-                  <div style={{ background: 'rgba(20, 184, 166, 0.18)', border: '1px solid rgba(20, 184, 166, 0.5)', borderRadius: '20px', padding: '5px 12px', fontSize: '11.5px', color: '#2dd4bf', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, boxShadow: '0 0 12px rgba(20,184,166,0.25)' }}>
+                  <div style={{ background: 'rgba(20, 184, 166, 0.18)', border: '1px solid rgba(20, 184, 166, 0.5)', borderRadius: '20px', padding: '5px 12px', fontSize: '10.0px', color: '#2dd4bf', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0, boxShadow: '0 0 12px rgba(20,184,166,0.25)' }}>
                     <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#2dd4bf', boxShadow: '0 0 8px #2dd4bf' }} /> Candidate
                   </div>
                 </div>
@@ -4155,7 +4128,7 @@ export default function Analytics() {
                     </div>
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: 8, color: '#94a3b8', fontWeight: 600, letterSpacing: '0.8px', textTransform: 'uppercase' }}>Event Type</div>
-                      <div style={{ fontSize: 12, color: '#fff', fontWeight: 700, marginTop: 1, textTransform: 'uppercase' }}>
+                      <div style={{ fontSize: 10, color: '#fff', fontWeight: 700, marginTop: 1, textTransform: 'uppercase' }}>
                         {selectedActivity.type ? selectedActivity.type.replace('_', ' ') : 'NOTIFICATION'}
                       </div>
                     </div>
